@@ -8,6 +8,7 @@ type Zone struct {
 	NotifiedSerial    int64    `json:"notified_serial,omitempty"`
 	AlsoNotify        []string `json:"also_notify,omitempty"`
 	AllowTransferKeys []string `json:"allow_transfer_keys,omitempty"`
+	EndCustomer       string   `json:"endcustomer,omitempty"`
 	RRsets            []RRset  `json:"rrsets,omitempty"`
 }
 
@@ -40,6 +41,7 @@ type ZoneCreateBIND struct {
 	Zone              string   `json:"zone"`
 	AlsoNotify        []string `json:"also_notify,omitempty"`
 	AllowTransferKeys []string `json:"allow_transfer_keys,omitempty"`
+	EndCustomer       string   `json:"endcustomer,omitempty"`
 }
 
 // ErrorResponse represents an API error

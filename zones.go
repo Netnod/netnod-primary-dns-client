@@ -9,13 +9,17 @@ import (
 )
 
 // ListZones returns all zones, automatically paginating through all results.
-func (c *Client) ListZones() ([]Zone, error) {
+// Pass a non-empty endcustomer to filter results to that value, or "" for all zones.
+func (c *Client) ListZones(endcustomer string) ([]Zone, error) {
 	var allZones []Zone
 	offset := 0
 	limit := 1000
 
 	for {
 		path := fmt.Sprintf("/api/v1/zones?limit=%d&offset=%d", limit, offset)
+		if endcustomer != "" {
+			path += "&endcustomer=" + url.QueryEscape(endcustomer)
+		}
 		resp, err := c.doRequest("GET", path, nil)
 		if err != nil {
 			return nil, err
