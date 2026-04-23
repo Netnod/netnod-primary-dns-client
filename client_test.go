@@ -58,7 +58,7 @@ func TestClient_ListZones(t *testing.T) {
 
 	client := NewClient(server.URL, "test-token")
 
-	zones, err := client.ListZones("")
+	zones, err := client.ListZones()
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -108,7 +108,7 @@ func TestClient_ListZones_Pagination(t *testing.T) {
 
 	client := NewClient(server.URL, "test-token")
 
-	zones, err := client.ListZones("")
+	zones, err := client.ListZones()
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -400,7 +400,7 @@ func TestClient_Unauthorized(t *testing.T) {
 
 	client := NewClient(server.URL, "bad-token")
 
-	_, err := client.ListZones("")
+	_, err := client.ListZones()
 	if err == nil {
 		t.Fatal("expected error for unauthorized request")
 	}
@@ -428,7 +428,7 @@ func TestClient_ListZones_EndcustomerFilter(t *testing.T) {
 
 	client := NewClient(server.URL, "test-token")
 
-	zones, err := client.ListZones("customer123")
+	zones, err := client.ListZones(WithEndCustomerName("customer123"))
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}

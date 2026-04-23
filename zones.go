@@ -8,17 +8,35 @@ import (
 	"net/url"
 )
 
+type listZoneFilter struct {
+	endCustomerName *string
+}
+
+// Option configures a ListZones filter.
+type Option func(*listZoneFilter)
+
+// WithEndCustomerName filters ListZones results to the given end customer.
+func WithEndCustomerName(endCustomerName string) Option {
+	return func(f *listZoneFilter) {
+		f.endCustomerName = &endCustomerName
+	}
+}
+
 // ListZones returns all zones, automatically paginating through all results.
-// Pass a non-empty endcustomer to filter results to that value, or "" for all zones.
-func (c *Client) ListZones(endcustomer string) ([]Zone, error) {
+func (c *Client) ListZones(options ...Option) ([]Zone, error) {
+	var filter listZoneFilter
+	for _, apply := range options {
+		apply(&filter)
+	}
+
 	var allZones []Zone
 	offset := 0
 	limit := 1000
 
 	for {
 		path := fmt.Sprintf("/api/v1/zones?limit=%d&offset=%d", limit, offset)
-		if endcustomer != "" {
-			path += "&endcustomer=" + url.QueryEscape(endcustomer)
+		if filter.endCustomerName != nil {
+			path += "&endcustomer=" + url.QueryEscape(*filter.endCustomerName)
 		}
 		resp, err := c.doRequest("GET", path, nil)
 		if err != nil {

@@ -23,8 +23,11 @@ import (
 func main() {
     client := netnod.NewClient("", "your-api-token") // empty URL = default
 
-    // List zones (pass "" for all, or an endcustomer value to filter)
-    zones, err := client.ListZones("")
+    // List all zones
+    zones, err := client.ListZones()
+
+    // List zones filtered by end customer
+    zones, err = client.ListZones(netnod.WithEndCustomerName("customer123"))
     if err != nil {
         log.Fatal(err)
     }
@@ -93,16 +96,16 @@ client := netnod.NewClient(baseURL, token)
 
 ### Zones
 
-| Method                     | Description                                                         |
-| -------------------------- | ------------------------------------------------------------------- |
-| `ListZones(endcustomer)`   | List all zones; pass `""` for all or an endcustomer value to filter |
-| `GetZone(zoneID)`          | Get zone with all RRsets                                            |
-| `CreateZone(zone)`         | Create new zone with RRsets                                         |
-| `CreateZoneFromBIND(zone)` | Create new zone from BIND zone file data                            |
-| `UpdateZone(zoneID, zone)` | Update zone configuration                                           |
-| `DeleteZone(zoneID)`       | Delete zone                                                         |
-| `ExportZone(zoneID)`       | Export zone in BIND zone file format                                |
-| `NotifyZone(zoneID)`       | Trigger immediate DNS NOTIFY                                        |
+| Method                     | Description                                                           |
+| -------------------------- | --------------------------------------------------------------------- |
+| `ListZones(options...)`    | List all zones; optionally pass `WithEndCustomerName(name)` to filter |
+| `GetZone(zoneID)`          | Get zone with all RRsets                                              |
+| `CreateZone(zone)`         | Create new zone with RRsets                                           |
+| `CreateZoneFromBIND(zone)` | Create new zone from BIND zone file data                              |
+| `UpdateZone(zoneID, zone)` | Update zone configuration                                             |
+| `DeleteZone(zoneID)`       | Delete zone                                                           |
+| `ExportZone(zoneID)`       | Export zone in BIND zone file format                                  |
+| `NotifyZone(zoneID)`       | Trigger immediate DNS NOTIFY                                          |
 
 ### Records
 
