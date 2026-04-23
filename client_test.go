@@ -406,7 +406,7 @@ func TestClient_Unauthorized(t *testing.T) {
 	}
 }
 
-func TestClient_ListZones_EndcustomerFilter(t *testing.T) {
+func TestClient_ListZones_EndCustomerFilter(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Query().Get("endcustomer") != "customer123" {
 			t.Errorf("expected endcustomer=customer123, got %s", r.URL.Query().Get("endcustomer"))
