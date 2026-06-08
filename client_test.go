@@ -405,3 +405,118 @@ func TestClient_Unauthorized(t *testing.T) {
 		t.Fatal("expected error for unauthorized request")
 	}
 }
+
+func TestClient_ListZones_EndCustomerFilter(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			t.Errorf("expected GET request, got %s", r.Method)
+		}
+
+		if r.URL.Path != "/api/v1/zones" {
+			t.Errorf("expected path /api/v1/zones, got %s", r.URL.Path)
+		}
+
+		if r.URL.Query().Get("endcustomer") != "customer123" {
+			t.Errorf("expected endcustomer=customer123, got %s", r.URL.Query().Get("endcustomer"))
+		}
+
+		response := ZoneListResponse{
+			Data: []Zone{
+				{ID: "example.com.", Name: "example.com.", EndCustomer: "customer123"},
+			},
+			Offset: 0,
+			Limit:  1000,
+			Total:  1,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	}))
+	defer server.Close()
+
+	client := NewClient(server.URL, "test-token")
+
+	zones, err := client.ListZones(WithEndCustomerName("customer123"))
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if len(zones) != 1 {
+		t.Fatalf("expected 1 zone, got %d", len(zones))
+	}
+
+	if zones[0].EndCustomer != "customer123" {
+		t.Errorf("expected endcustomer customer123, got %s", zones[0].EndCustomer)
+	}
+}
+
+func TestClient_CreateZone_EndCustomer(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			t.Errorf("expected POST request, got %s", r.Method)
+		}
+
+		if r.URL.Path != "/api/v1/zones" {
+			t.Errorf("expected path /api/v1/zones, got %s", r.URL.Path)
+		}
+
+		var zone Zone
+		if err := json.NewDecoder(r.Body).Decode(&zone); err != nil {
+			t.Fatalf("failed to decode request body: %v", err)
+		}
+
+		if zone.EndCustomer != "customer123" {
+			t.Errorf("expected endcustomer customer123, got %s", zone.EndCustomer)
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		created := Zone{ID: zone.Name, Name: zone.Name, EndCustomer: zone.EndCustomer}
+		json.NewEncoder(w).Encode(created)
+	}))
+	defer server.Close()
+
+	client := NewClient(server.URL, "test-token")
+
+	zone := &Zone{Name: "example.com.", EndCustomer: "customer123"}
+	created, err := client.CreateZone(zone)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if created.EndCustomer != "customer123" {
+		t.Errorf("expected endcustomer customer123, got %s", created.EndCustomer)
+	}
+}
+
+func TestClient_GetZone_EndCustomer(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			t.Errorf("expected GET request, got %s", r.Method)
+		}
+
+		if r.URL.Path != "/api/v1/zones/example.com." {
+			t.Errorf("expected path /api/v1/zones/example.com., got %s", r.URL.Path)
+		}
+
+		zone := Zone{
+			ID:          "example.com.",
+			Name:        "example.com.",
+			EndCustomer: "customer123",
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(zone)
+	}))
+	defer server.Close()
+
+	client := NewClient(server.URL, "test-token")
+
+	zone, err := client.GetZone("example.com.")
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if zone.EndCustomer != "customer123" {
+		t.Errorf("expected endcustomer customer123, got %s", zone.EndCustomer)
+	}
+}
