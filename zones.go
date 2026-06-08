@@ -12,18 +12,18 @@ type listZoneFilter struct {
 	endCustomerName *string
 }
 
-// ListZonesOption configures a ListZones filter.
-type ListZonesOption func(*listZoneFilter)
+// listZonesOption configures a ListZones filter.
+type listZonesOption func(*listZoneFilter)
 
 // WithEndCustomerName filters ListZones results to the given end customer.
-func WithEndCustomerName(endCustomerName string) ListZonesOption {
+func WithEndCustomerName(endCustomerName string) listZonesOption {
 	return func(f *listZoneFilter) {
 		f.endCustomerName = &endCustomerName
 	}
 }
 
 // ListZones returns all zones, automatically paginating through all results.
-func (c *Client) ListZones(options ...ListZonesOption) ([]Zone, error) {
+func (c *Client) ListZones(options ...listZonesOption) ([]Zone, error) {
 	var filter listZoneFilter
 	for _, apply := range options {
 		apply(&filter)
