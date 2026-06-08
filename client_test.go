@@ -408,6 +408,14 @@ func TestClient_Unauthorized(t *testing.T) {
 
 func TestClient_ListZones_EndCustomerFilter(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			t.Errorf("expected GET request, got %s", r.Method)
+		}
+
+		if r.URL.Path != "/api/v1/zones" {
+			t.Errorf("expected path /api/v1/zones, got %s", r.URL.Path)
+		}
+
 		if r.URL.Query().Get("endcustomer") != "customer123" {
 			t.Errorf("expected endcustomer=customer123, got %s", r.URL.Query().Get("endcustomer"))
 		}
@@ -444,6 +452,14 @@ func TestClient_ListZones_EndCustomerFilter(t *testing.T) {
 
 func TestClient_CreateZone_EndCustomer(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			t.Errorf("expected POST request, got %s", r.Method)
+		}
+
+		if r.URL.Path != "/api/v1/zones" {
+			t.Errorf("expected path /api/v1/zones, got %s", r.URL.Path)
+		}
+
 		var zone Zone
 		if err := json.NewDecoder(r.Body).Decode(&zone); err != nil {
 			t.Fatalf("failed to decode request body: %v", err)
@@ -474,6 +490,14 @@ func TestClient_CreateZone_EndCustomer(t *testing.T) {
 
 func TestClient_GetZone_EndCustomer(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			t.Errorf("expected GET request, got %s", r.Method)
+		}
+
+		if r.URL.Path != "/api/v1/zones/example.com." {
+			t.Errorf("expected path /api/v1/zones/example.com., got %s", r.URL.Path)
+		}
+
 		zone := Zone{
 			ID:          "example.com.",
 			Name:        "example.com.",
