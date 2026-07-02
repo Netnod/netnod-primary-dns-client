@@ -350,7 +350,10 @@ func TestClient_PatchZoneRRsets_DELETE(t *testing.T) {
 		if !ok || len(rrsets) == 0 {
 			t.Fatal("expected rrsets in body")
 		}
-		rrset := rrsets[0].(map[string]interface{})
+		rrset, ok := rrsets[0].(map[string]interface{})
+		if !ok {
+			t.Fatalf("expected rrsets[0] to be an object, got %T", rrsets[0])
+		}
 		if rrset["changetype"] != "DELETE" {
 			t.Errorf("expected changetype DELETE, got %v", rrset["changetype"])
 		}
@@ -376,7 +379,10 @@ func TestClient_PatchZoneRRsets_EXTEND(t *testing.T) {
 		if !ok || len(rrsets) == 0 {
 			t.Fatal("expected rrsets in body")
 		}
-		rrset := rrsets[0].(map[string]interface{})
+		rrset, ok := rrsets[0].(map[string]interface{})
+		if !ok {
+			t.Fatalf("expected rrsets[0] to be an object, got %T", rrsets[0])
+		}
 		if rrset["changetype"] != "EXTEND" {
 			t.Errorf("expected changetype EXTEND, got %v", rrset["changetype"])
 		}
@@ -404,7 +410,10 @@ func TestClient_PatchZoneRRsets_PRUNE(t *testing.T) {
 		if !ok || len(rrsets) == 0 {
 			t.Fatal("expected rrsets in body")
 		}
-		rrset := rrsets[0].(map[string]interface{})
+		rrset, ok := rrsets[0].(map[string]interface{})
+		if !ok {
+			t.Fatalf("expected rrsets[0] to be an object, got %T", rrsets[0])
+		}
 		if rrset["changetype"] != "PRUNE" {
 			t.Errorf("expected changetype PRUNE, got %v", rrset["changetype"])
 		}
