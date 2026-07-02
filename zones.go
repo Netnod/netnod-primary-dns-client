@@ -131,9 +131,15 @@ func (c *Client) CreateZoneFromBIND(zone *ZoneCreateBIND) (*Zone, error) {
 	return &created, nil
 }
 
-// UpdateZone updates zone configuration
+// UpdateZone updates zone configuration. The zone's Name is never sent: the
+// API rejects a "name" key in the request body, so it's stripped here
+// regardless of what the caller passes (e.g. a Zone round-tripped from
+// GetZone, which always has Name populated).
 func (c *Client) UpdateZone(zoneID string, zone *Zone) error {
-	resp, err := c.doRequest("PUT", "/api/v1/zones/"+url.PathEscape(zoneID), zone)
+	body := *zone
+	body.Name = ""
+
+	resp, err := c.doRequest("PUT", "/api/v1/zones/"+url.PathEscape(zoneID), &body)
 	if err != nil {
 		return err
 	}

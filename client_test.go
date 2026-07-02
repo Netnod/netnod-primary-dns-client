@@ -223,6 +223,7 @@ func TestClient_UpdateZone(t *testing.T) {
 	defer server.Close()
 
 	err := NewClient(server.URL, "test-token").UpdateZone("example.com.", &Zone{
+		Name:       "example.com.",
 		AlsoNotify: []string{"1.2.3.4"},
 	})
 	if err != nil {
