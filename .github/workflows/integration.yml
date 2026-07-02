@@ -3,6 +3,9 @@ name: Integration
 on:
   push:
     branches: ["main"]
+  schedule:
+    - cron: "13 10 * * *"
+      timezone: "Europe/Stockholm"
 
 jobs:
   integration:
