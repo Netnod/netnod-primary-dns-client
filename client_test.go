@@ -2,8 +2,10 @@ package netnod
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -227,6 +229,24 @@ func TestClient_UpdateZone(t *testing.T) {
 		AlsoNotify: []string{"1.2.3.4"},
 	})
 	if err != nil {
+		t.Fatalf("UpdateZone: %v", err)
+	}
+}
+
+func TestClient_UpdateZone_NilZone(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Fatalf("read body: %v", err)
+		}
+		if strings.TrimSpace(string(body)) != "null" {
+			t.Errorf("expected null body, got %q", body)
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer server.Close()
+
+	if err := NewClient(server.URL, "test-token").UpdateZone("example.com.", nil); err != nil {
 		t.Fatalf("UpdateZone: %v", err)
 	}
 }

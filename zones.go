@@ -136,10 +136,13 @@ func (c *Client) CreateZoneFromBIND(zone *ZoneCreateBIND) (*Zone, error) {
 // regardless of what the caller passes (e.g. a Zone round-tripped from
 // GetZone, which always has Name populated).
 func (c *Client) UpdateZone(zoneID string, zone *Zone) error {
-	body := *zone
-	body.Name = ""
+	if zone != nil {
+		z := *zone
+		z.Name = ""
+		zone = &z
+	}
 
-	resp, err := c.doRequest("PUT", "/api/v1/zones/"+url.PathEscape(zoneID), &body)
+	resp, err := c.doRequest("PUT", "/api/v1/zones/"+url.PathEscape(zoneID), zone)
 	if err != nil {
 		return err
 	}
