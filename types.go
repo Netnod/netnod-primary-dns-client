@@ -4,7 +4,7 @@ package netnod
 // Zone represents a DNS zone
 type Zone struct {
 	ID                string   `json:"id,omitempty"`
-	Name              string   `json:"name"`
+	Name              string   `json:"name,omitempty"`
 	NotifiedSerial    int64    `json:"notified_serial,omitempty"`
 	AlsoNotify        []string `json:"also_notify,omitempty"`
 	AllowTransferKeys []string `json:"allow_transfer_keys,omitempty"`

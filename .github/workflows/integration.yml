@@ -1,0 +1,25 @@
+name: Integration
+
+on:
+  push:
+    branches: ["main"]
+  schedule:
+    - cron: "13 10 * * *"
+      timezone: "Europe/Stockholm"
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+
+      - name: Integration tests
+        env:
+          NETNOD_API_TOKEN: ${{ secrets.NETNOD_API_TOKEN }}
+          NETNOD_TEST_ZONE: ${{ secrets.NETNOD_TEST_ZONE }}
+        run: go test -tags=integration -run 'TestIntegration_' -v -count=1 -race ./...
